@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Be My Valentine?</title>
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #ffecf2;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            text-align: center;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 90%;
+        }
+
+        h1 {
+            color: #ff4d6d;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            background-color: #ff4d6d;
+            color: white;
+        }
+
+        #noBtn {
+            background-color: #gray;
+            color: #333;
+        }
+
+        .success {
+            display: none;
+            color: #ff4d6d;
+            font-size: 2rem;
+            text-align: center;
+            animation: heartBeat 1s infinite;
+        }
+
+        .confetti {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            display: none;
+        }
+
+        .name-input, .question-section {
+            margin-bottom: 2rem;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            font-size: 1.2rem;
+            border: 2px solid #ff4d6d;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @keyframes heartBeat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .party {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="party" id="party"></div>
+    <div class="container">
+        <div id="nameSection">
+            <h1>Hey there! 👋</h1>
+            <div class="name-input">
+                <input type="text" id="nameInput" placeholder="What's your name?">
+                <button onclick="startQuestions()">Continue</button>
+            </div>
+        </div>
+
+        <div id="question1" class="question-section hidden">
+            <h1>Hi <span id="userName"></span>! 🌟</h1>
+            <p>Do you believe in love at first sight?</p>
+            <div class="buttons">
+                <button onclick="showQuestion(2)">Yes</button>
+                <button onclick="showQuestion(2)">No</button>
+            </div>
+        </div>
+
+        <div id="question2" class="question-section hidden">
+            <h1>One more thing...</h1>
+            <p>Do you like romantic surprises?</p>
+            <div class="buttons">
+                <button onclick="showValentineQuestion()">Yes</button>
+                <button onclick="showValentineQuestion()">No</button>
+            </div>
+        </div>
+
+        <div id="valentineQuestion" class="question-section hidden">
+            <h1><span id="userNameValentine"></span>, Will you be my Valentine? ❤️</h1>
+            <div class="buttons">
+                <button id="yesBtn">Yes</button>
+                <button id="noBtn">No</button>
+            </div>
+        </div>
+
+        <div class="success hidden" id="success">
+            <span id="userNameSuccess"></span>, You are now my date on February 14! ❤️
+        </div>
+    </div>
+
+    <script>
+        let userName = '';
+        let fontSize = 1.2;
+
+        function startQuestions() {
+            userName = document.getElementById('nameInput').value.trim();
+            if (!userName) {
+                alert('Please enter your name!');
+                return;
+            }
+            document.getElementById('nameSection').classList.add('hidden');
+            document.getElementById('userName').textContent = userName;
+            document.getElementById('question1').classList.remove('hidden');
+        }
+
+        function showQuestion(num) {
+            document.querySelectorAll('.question-section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            document.getElementById(`question${num}`).classList.remove('hidden');
+        }
+
+        function showValentineQuestion() {
+            document.querySelectorAll('.question-section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            document.getElementById('userNameValentine').textContent = userName;
+            document.getElementById('valentineQuestion').classList.remove('hidden');
+        }
+
+        function createParticle(type) {
+            const particle = document.createElement('div');
+            particle.style.position = 'fixed';
+            particle.style.left = Math.random() * 100 + 'vw';
+            particle.style.top = '100vh';
+            particle.style.fontSize = Math.random() * 2 + 1 + 'rem';
+            particle.style.animation = 'float 4s linear forwards';
+            
+            if (type === 'confetti') {
+                particle.innerHTML = ['🎉', '🎊', '✨', '⭐'][Math.floor(Math.random() * 4)];
+            } else {
+                particle.innerHTML = '❤️';
+            }
+            
+            document.getElementById('party').appendChild(particle);
+
+            setTimeout(() => {
+                particle.remove();
+            }, 4000);
+        }
+
+        function startParty() {
+            document.getElementById('party').style.display = 'block';
+            setInterval(() => {
+                createParticle('confetti');
+                createParticle('heart');
+            }, 100);
+        }
+
+        document.getElementById('yesBtn').addEventListener('click', () => {
+            document.getElementById('valentineQuestion').classList.add('hidden');
+            document.getElementById('success').classList.remove('hidden');
+            document.getElementById('userNameSuccess').textContent = userName;
+            startParty();
+        });
+
+        document.getElementById('noBtn').addEventListener('click', () => {
+            fontSize += 0.3;
+            document.getElementById('yesBtn').style.fontSize = `${fontSize}rem`;
+            const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+            const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+            noBtn.style.position = 'absolute';
+            noBtn.style.left = `${x}px`;
+            noBtn.style.top = `${y}px`;
+        });
+
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes float {
+                to {
+                    transform: translateY(-100vh) rotate(${Math.random() * 360}deg);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
